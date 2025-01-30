@@ -1,14 +1,12 @@
-
-// src/contexts/AuthContext.tsx
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useEffect, useState, } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 import { API_BASE_URL } from "../../configs/config.ts";
-import { StudentAcademicProfile } from '../../models/student_academic_profile.ts';
+import { Lecturer } from '../../models/lecturer.ts';
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    student: StudentAcademicProfile | null;
+    lecturer: Lecturer | null;
     loading: boolean;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
@@ -17,17 +15,17 @@ interface AuthContextType {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [student, setStudent] = useState<StudentAcademicProfile | null>(null);
+    const [lecturer, setLecturer] = useState<Lecturer | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         // Check for existing auth token on mount
         const token = localStorage.getItem('authToken');
-        const studentId = localStorage.getItem('studentId');
+        const lecturerId = localStorage.getItem('lecturerId');
 
         if (token) {
-            if (studentId) {
-                fetchStudentData(studentId).then(() => {
+            if (lecturerId) {
+                fetchLecturerData(lecturerId).then(() => {
 
                 });
             } else {
@@ -38,22 +36,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
-    const fetchStudentData = async (studentId: string) => {
+    const fetchLecturerData = async (lecturerId: string) => {
         try {
-            const response = await axios.get(`${API_BASE_URL}/student/${studentId}/profile`, {
+            const response = await axios.get(`${API_BASE_URL}/lecturer/${lecturerId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('authToken')}`
                 }
             });
-            setStudent(response.data);
+            setLecturer(response.data.data);
             setIsAuthenticated(true);
         } catch (error) {
-            console.error('Error fetching student data:', error);
+            console.error('Error fetching lecturer data:', error);
             logout();
         } finally {
             setLoading(false);
         }
     };
+
 
     const login = async (username: string, password: string) => {
         try {
@@ -67,17 +66,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.log(response.data);
 
             const token = response.data.token;
-            const student: StudentAcademicProfile = response.data.profile;
+            const lecturer = response.data.profile;
 
-            // Store token and student ID
+            // Store token and lecturer ID
             localStorage.setItem('authToken', token);
-            localStorage.setItem('studentId', student.student_id);
+            localStorage.setItem('lecturerId', lecturer.lecturer_id);
 
             // Set up axios default headers
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            // Fetch student data
-            setStudent(student);
+            // Fetch lecturer data
+            setLecturer(lecturer);
             setIsAuthenticated(true);
             message.success('Successfully logged in!');
         } catch (error) {
@@ -91,15 +90,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = () => {
         localStorage.removeItem('authToken');
-        localStorage.removeItem('studentId');
+        localStorage.removeItem('lecturerId');
         delete axios.defaults.headers.common['Authorization'];
         setIsAuthenticated(false);
-        setStudent(null);
+        setLecturer(null);
         message.success('Successfully logged out');
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, student, loading, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, lecturer, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

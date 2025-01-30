@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Avatar, Dropdown, Space, Typography, Button, Breadcrumb } from 'antd';
 import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { ItemType } from 'antd/es/menu/interface';
-import {useAuth} from "../../hooks/auth/auth.ts";
+import { useAuth } from "../../hooks/auth/auth.ts";
 
 const { Header } = Layout;
 const { Text } = Typography;
@@ -12,7 +12,7 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ breadcrumbItems }) => {
-    const { student, logout } = useAuth();
+    const { lecturer: student, logout } = useAuth();
 
     const profileMenu: ItemType[] = [
         {

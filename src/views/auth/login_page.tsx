@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import {useAuth} from "../../hooks/auth/auth.ts";
+import { useAuth } from "../../hooks/auth/auth.ts";
 
 const { Title } = Typography;
 
@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
                         alt="Logo"
                         className="w-24 h-24 mx-auto mb-4"
                     />
-                    <Title level={2}>Student Portal</Title>
+                    <Title level={2}>Staff Portal</Title>
                     <Title level={4} className="text-gray-500 font-normal">
                         Welcome back!
                     </Title>
@@ -53,11 +53,11 @@ const LoginPage: React.FC = () => {
                 >
                     <Form.Item
                         name="username"
-                        rules={[{ required: true, message: 'Please input your Student ID!' }]}
+                        rules={[{ required: true, message: 'Please input your username/email' }]}
                     >
                         <Input
                             prefix={<UserOutlined className="text-gray-400" />}
-                            placeholder="Student ID"
+                            placeholder="username/email"
                             size="large"
                         />
                     </Form.Item>

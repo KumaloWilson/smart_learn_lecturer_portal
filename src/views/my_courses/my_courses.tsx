@@ -21,7 +21,7 @@ import { Course } from '../../models/course';
 const { TabPane } = Tabs;
 
 export const CourseDashboard: React.FC = () => {
-    const { student } = useAuth();
+    const { lecturer: student } = useAuth();
     const studentId = student?.student_id;
     const [activeTab, setActiveTab] = useState('current');
     const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
