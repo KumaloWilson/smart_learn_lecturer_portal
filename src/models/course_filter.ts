@@ -1,7 +1,6 @@
-export interface CourseFilter {
+export interface CourseFilters {
     semester?: string;
-    year?: string;
+    academicYear?: string;
     status?: string;
-    level?: number;
-    isElective?: boolean;
+    search?: string;
 }
