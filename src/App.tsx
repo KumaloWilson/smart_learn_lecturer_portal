@@ -151,8 +151,8 @@ const App: React.FC = () => {
 
     const contentMap: Record<string, React.ReactNode> = {
       dashboard: <LecturerDashboard />,
-      mycourses: <div>CourseDashboard</div>,
-      materials: <CourseManagement />,
+      mycourses: <CourseManagement />,
+      materials: <div>CourseManagement</div>,
       schedule: <div>ClassSchedule </div>,
       quizzes: <div>QuizManagement </div>,
       assignments: <div>AssignmentManagement</div>,
