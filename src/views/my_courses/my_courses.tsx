@@ -1,5 +1,5 @@
 import React, { useState, } from 'react';
-import { Row, Col, Modal, Empty, Spin } from 'antd';
+import { Row, Col, Empty, Spin, Drawer } from 'antd';
 import { useQuery } from 'react-query';
 import { CourseCard } from '../../components/course/card';
 import { CourseDetailsTabs } from '../../components/course/details';
@@ -42,15 +42,15 @@ const CourseManagement: React.FC = () => {
                 </Row>
             )}
 
-            <Modal
+            <Drawer
                 title={selectedCourse?.course_name}
                 open={!!selectedCourse}
-                onCancel={() => setSelectedCourse(null)}
-                width={800}
+                onClose={() => setSelectedCourse(null)}
+                width={1200}
                 footer={null}
             >
                 {selectedCourse && <CourseDetailsTabs course={selectedCourse} />}
-            </Modal>
+            </Drawer>
         </div>
     );
 };
