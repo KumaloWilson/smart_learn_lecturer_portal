@@ -7,16 +7,16 @@ import { CourseFilters as CourseFiltersType } from '../../models/course_filter';
 import { LecturerCourseAssignmentDetails } from '../../models/lecturer_courses';
 import { CourseManagementService } from '../../services/course_service/api';
 import { CourseFiltersComp } from '../../components/course/filters';
+import { useAuth } from '../../hooks/auth/auth';
 
 const CourseManagement: React.FC = () => {
     const [filters, setFilters] = useState<CourseFiltersType>({});
     const [selectedCourse, setSelectedCourse] = useState<LecturerCourseAssignmentDetails | null>(null);
-
-    const lecturerId = "current_lecturer_id"; // Get from auth context
+    const { lecturer } = useAuth();
 
     const { data: courses, isLoading } = useQuery(
-        ['lecturerCourses', lecturerId, filters],
-        () => CourseManagementService.getLecturerCourses(lecturerId)
+        ['lecturerCourses', lecturer?.lecturer_id, filters],
+        () => CourseManagementService.getLecturerCourses(lecturer!.lecturer_id)
     );
 
     if (isLoading) {

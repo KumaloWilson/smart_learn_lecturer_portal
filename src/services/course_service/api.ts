@@ -6,7 +6,7 @@ import { API_BASE_URL } from "../../configs/config";
 
 export class CourseManagementService {
     static async getLecturerCourses(lecturerId: string): Promise<LecturerCourseAssignmentDetails[]> {
-        const response = await axios.get(`${API_BASE_URL}/lecturer-courses/lecturer/${lecturerId}`);
+        const response = await axios.get(`${API_BASE_URL}/lecturer/course/assignments/lecturer/${lecturerId}`);
         return response.data.data;
     }
 
