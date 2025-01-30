@@ -1,58 +1,34 @@
 import React from 'react';
-import { Card, Tag, Space, Button, Typography, } from 'antd';
-import { BookOutlined, ClockCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { StudentCourseEnrollment } from "../../models/course_enrollment.ts";
-import { Course } from "../../models/course.ts";
+import { Card, Tag, Typography, Space } from 'antd';
+import { LecturerCourseAssignmentDetails } from '../../models/lecturer_courses';
+import { ClockCircleOutlined } from '@ant-design/icons';
 
-const { Title } = Typography;
+const { Text } = Typography;
 
 interface CourseCardProps {
-    course: Course & StudentCourseEnrollment;
-    onViewDetails: (courseId: string) => void;
+    course: LecturerCourseAssignmentDetails;
+    onClick: (course: LecturerCourseAssignmentDetails) => void;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course, onViewDetails }) => {
-    console.log(course);
-    const getStatusColor = (status: string) => {
-        const colors: Record<string, string> = {
-            enrolled: 'blue',
-            completed: 'green',
-            withdrawn: 'red',
-            failed: 'red'
-        };
-        return colors[status] || 'default';
-    };
-
-    return (
-        <Card
-            hoverable
-            className="mb-4"
-            actions={[
-                <Button type="link" onClick={() => onViewDetails(course.course_id)}>
-                    View Details
-                </Button>
-            ]}
-        >
-            <Space direction="vertical" className="w-full">
-                <Space align="center" className="w-full justify-between">
-                    <Title level={4}>{course.course_name}</Title>
-                    <Tag color={getStatusColor(course.status)}>{course.status}</Tag>
-                </Space>
-                <Space className="w-full justify-between">
-                    <span>
-                        <BookOutlined /> {course.course_code}
-                    </span>
-                    <span>
-                        <ClockCircleOutlined /> {course.credit_hours} Credits
-                    </span>
-                    {course.grade && (
-                        <span>
-                            <CheckCircleOutlined /> Grade: {course.grade}
-                        </span>
-                    )}
-                </Space>
+export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => (
+    <Card
+        hoverable
+        onClick={() => onClick(course)}
+        className="h-full"
+    >
+        <Space direction="vertical" className="w-full">
+            <Space align="center" className="w-full justify-between">
+                <Text strong>{course.course_code}</Text>
+                <Tag color={course.role === 'primary' ? 'blue' : 'green'}>
+                    {course.role}
+                </Tag>
             </Space>
-        </Card>
-    );
-};
-
+            <Text className="text-lg font-medium">{course.course_name}</Text>
+            <Space className="mt-2">
+                <ClockCircleOutlined /> <Text>Semester {course.semester}</Text>
+                <Text>|</Text>
+                <Text>{course.academic_year}</Text>
+            </Space>
+        </Space>
+    </Card>
+);
