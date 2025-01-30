@@ -2,6 +2,7 @@ import axios from "axios";
 import { Course } from "../../models/course";
 import { LecturerCourseAssignmentDetails } from "../../models/lecturer_courses";
 import { API_BASE_URL } from "../../configs/config";
+import { StudentCourseEnrollmentDetails } from "../../models/student_course_enrollment";
 
 
 export class CourseManagementService {
@@ -31,8 +32,8 @@ export class CourseManagementService {
         await axios.post(`${API_BASE_URL}/courses/${courseId}/materials`, data);
     }
 
-    static async getCourseStudents(courseId: string): Promise<unknown[]> {
-        const response = await axios.get(`${API_BASE_URL}/courses/${courseId}/students`);
+    static async getCourseStudents(courseId: string): Promise<StudentCourseEnrollmentDetails[]> {
+        const response = await axios.get(`${API_BASE_URL}/student/course/enrollments/${courseId}/students/current`);
         return response.data.data;
     }
 
