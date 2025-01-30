@@ -1,11 +1,11 @@
 import { Form, Select, Input, DatePicker } from 'antd';
-import type { CourseFilters } from '../../models/course_filter';
+import { CourseFilters } from '../../models/course_filter';
 
 interface CourseFiltersProps {
     onFiltersChange: (filters: CourseFilters) => void;
 }
 
-const CourseFilters: React.FC<CourseFiltersProps> = ({ onFiltersChange }) => (
+export const CourseFiltersComp: React.FC<CourseFiltersProps> = ({ onFiltersChange }) => (
     <Form layout="inline" className="mb-4">
         <Form.Item name="semester">
             <Select

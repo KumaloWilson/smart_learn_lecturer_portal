@@ -26,6 +26,7 @@ import { useAuth } from "./hooks/auth/auth";
 import LoginPage from "./views/auth/login_page";
 import ProfileHeader from "./components/profile/profile_header";
 import LecturerDashboard from "./views/dashboard/dashboard";
+import CourseManagement from "./views/my_courses/my_courses";
 
 const queryClient = new QueryClient();
 const { Content, Footer, Sider } = Layout;
@@ -151,7 +152,7 @@ const App: React.FC = () => {
     const contentMap: Record<string, React.ReactNode> = {
       dashboard: <LecturerDashboard />,
       mycourses: <div>CourseDashboard</div>,
-      materials: <div>CourseManagement</div>,
+      materials: <CourseManagement />,
       schedule: <div>ClassSchedule </div>,
       quizzes: <div>QuizManagement </div>,
       assignments: <div>AssignmentManagement</div>,
