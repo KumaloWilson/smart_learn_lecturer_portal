@@ -155,7 +155,7 @@ const App: React.FC = () => {
       mycourses: <CourseManagement />,
       materials: <div>CourseManagement</div>,
       schedule: <div>ClassSchedule </div>,
-      quizzes: <QuizList/>,
+      quizzes: <QuizList lecturerId={lecturer!.lecturer_id!}/>,
       assignments: <div>AssignmentManagement</div>,
       grading: <div>GradingDashboard </div>,
       exambank: <div>QuestionBank </div>,

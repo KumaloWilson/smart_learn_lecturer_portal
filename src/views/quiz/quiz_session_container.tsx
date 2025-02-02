@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate, } from 'react-router-dom';
 import { message, Spin, Result, Button, Modal, Progress, Space, Alert } from 'antd';
 import { LoadingOutlined, ExclamationCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { QuizSession } from '../../components/quiz/quiz_session';
+import { QuizSession } from '../../components/quiz/quiz_drawer.tsx';
 import { quizAPI } from '../../services/quiz_services/api';
 import { useQuizSession } from '../../hooks/quiz/quiz_session';
 import { QuestionResponse } from '../../models/quiz_question_response';

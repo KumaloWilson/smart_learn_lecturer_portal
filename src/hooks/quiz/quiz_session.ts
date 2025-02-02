@@ -1,121 +1,96 @@
-import { useState, useEffect, useCallback } from 'react';
-import { quizAPI } from '../../services/quiz_services/api';
-import {QuizSession} from "../../models/quiz_session.ts";
+import { useState, useEffect } from 'react';
+import { message } from 'antd';
+import {LecturerCourseAssignmentDetails} from "../../models/lecturer_courses.ts";
+import {Quiz} from "../../models/quiz.ts";
+import {CourseTopic} from "../../models/course_topic.ts";
+import { quizAPI } from '../../services/quiz_services/api.ts';
+import {CourseManagementService} from "../../services/course_service/api.ts";
 
-interface QuizSessionHook {
-    session: QuizSession | null;
-    loading: boolean;
-    error: string | null;
-    resetSession: () => void;
-    updateSessionStatus: (status: QuizSession['status']) => void;
-    refreshSession: () => Promise<void>;
-    isSessionActive: boolean;
-    timeRemaining: number | null;
-}
-
-export const useQuizSession = (attempt_id: string): QuizSessionHook => {
-    const [session, setSession] = useState<QuizSession | null>(null);
+export const useQuizManagement = (lecturerId: string) => {
+    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
+    const [lecturerCourses, setLecturerCourses] = useState<LecturerCourseAssignmentDetails[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState<string>('');
+    const [courseTopics, setCourseTopics] = useState<CourseTopic[]>([]);
 
-    const loadSession = useCallback(async () => {
+    const loadQuizzes = async () => {
         try {
             setLoading(true);
-            setError(null);
-
-            const response = await quizAPI.getQuizSession(attempt_id);
-
-            if (!response.data) {
-                throw new Error('No session data received');
-            }
-
-            // Validate session data
-            if (!response.data.questions || !Array.isArray(response.data.questions)) {
-                throw new Error('Invalid session data format');
-            }
-
-            setSession(response.data);
-
-            // Calculate remaining time if session has time limit
-            if (response.data.end_time) {
-                const endTime = new Date(response.data.end_time).getTime();
-                const currentTime = new Date().getTime();
-                setTimeRemaining(Math.max(0, endTime - currentTime));
-            }
-
+            const data = await quizAPI.getQuizByInstructorID(lecturerId);
+            setQuizzes(data);
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to load quiz session';
-            setError(errorMessage);
-            setSession(null);
+            message.error('Failed to load quizzes');
+            console.error(error);
         } finally {
             setLoading(false);
         }
-    }, [attempt_id]);
+    };
 
-    // Initial load
-    useEffect(() => {
-        loadSession();
-    }, [loadSession]);
-
-    // Timer effect for time remaining
-    useEffect(() => {
-        if (!timeRemaining || timeRemaining <= 0) return;
-
-        const timer = setInterval(() => {
-            setTimeRemaining(prev => {
-                if (prev === null || prev <= 0) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prev - 1000; // Decrease by 1 second
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, [timeRemaining]);
-
-    // Auto-submit when time expires
-    useEffect(() => {
-        if (timeRemaining === 0 && session?.status === 'active') {
-            updateSessionStatus('expired');
-            // You might want to add auto-submit logic here
+    const loadLecturerCourses = async () => {
+        try {
+            const courses = await CourseManagementService.getLecturerCourses(lecturerId);
+            setLecturerCourses(courses);
+        } catch (error) {
+            message.error('Failed to load lecturer courses');
+            console.error(error);
         }
-    }, [timeRemaining, session?.status]);
+    };
 
-    const resetSession = useCallback(() => {
-        setSession(null);
-        setLoading(false);
-        setError(null);
-        setTimeRemaining(null);
-    }, []);
+    const loadCourseTopics = async (courseId: string) => {
+        try {
+            const topics = await  CourseManagementService.getCourseTopics(courseId);
+            setCourseTopics(topics);
+        } catch (error) {
+            message.error('Failed to load course topics');
+            console.error(error);
+        }
+    };
 
-    const updateSessionStatus = useCallback((status: QuizSession['status']) => {
-        setSession(prev => prev ? { ...prev, status } : null);
-    }, []);
+    const createQuiz = async (values: Partial<Quiz>) => {
+        try {
+            const response = await quizAPI.createQuiz(values);
+            if (response.success) {
+                message.success('Quiz created successfully');
+                loadQuizzes();
+            }
+            return response;
+        } catch (error) {
+            message.error('Failed to create quiz');
+            throw error;
+        }
+    };
 
-    const refreshSession = useCallback(async () => {
-        await loadSession();
-    }, [loadSession]);
+    const deleteQuiz = async (quizId: string) => {
+        try {
+           await quizAPI.deleteQuizByID(quizId);
+            message.success('Quiz deleted successfully');
+            loadQuizzes();
+        } catch (error) {
+            message.error('Failed to delete quiz');
+            throw error;
+        }
+    };
 
-    const isSessionActive = session?.status === 'active' &&
-        (!timeRemaining || timeRemaining > 0);
-
-    // Clean up on unmount
     useEffect(() => {
-        return () => {
-            resetSession();
-        };
-    }, [resetSession]);
+        loadQuizzes();
+        loadLecturerCourses();
+    }, [lecturerId]);
+
+    useEffect(() => {
+        if (selectedCourse) {
+            loadCourseTopics(selectedCourse);
+        }
+    }, [selectedCourse]);
 
     return {
-        session,
+        quizzes,
         loading,
-        error,
-        resetSession,
-        updateSessionStatus,
-        refreshSession,
-        isSessionActive,
-        timeRemaining
+        lecturerCourses,
+        courseTopics,
+        selectedCourse,
+        setSelectedCourse,
+        createQuiz,
+        deleteQuiz,
+        refreshQuizzes: loadQuizzes
     };
 };

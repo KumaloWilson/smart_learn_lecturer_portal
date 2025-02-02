@@ -3,6 +3,7 @@ import { Course } from "../../models/course";
 import { LecturerCourseAssignmentDetails } from "../../models/lecturer_courses";
 import { API_BASE_URL } from "../../configs/config";
 import { StudentCourseEnrollmentDetails } from "../../models/student_course_enrollment";
+import {CourseTopic} from "../../models/course_topic.ts";
 
 
 export class CourseManagementService {
@@ -10,6 +11,12 @@ export class CourseManagementService {
         const response = await axios.get(`${API_BASE_URL}/lecturer/course/assignments/lecturer/${lecturerId}`);
         return response.data.data;
     }
+
+    static async getCourseTopics(courseId: string): Promise<CourseTopic[]> {
+        const response = await axios.get(`${API_BASE_URL}/lecturer/course/topics/${courseId}`);
+        return response.data.data;
+    }
+
 
     static async getCourseDetails(courseId: string): Promise<Course> {
         const response = await axios.get(`${API_BASE_URL}/courses/${courseId}`);
@@ -22,7 +29,7 @@ export class CourseManagementService {
         academicYear: string
     ): Promise<LecturerCourseAssignmentDetails[]> {
         const response = await axios.get(
-            `${API_BASE_URL}/lecturer-courses/semester/${semester}/year/${academicYear}`
+            `${API_BASE_URL}/lecturer-courses/semester/${semester}/year/${academicYear}/${lecturerId}`
         );
         return response.data.data;
     }

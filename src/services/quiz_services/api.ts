@@ -36,8 +36,6 @@ export const quizAPI = {
         return response.data;
     },
 
-
-
     getQuizSession: async (attempt_id: string) => {
         const response = await axios.get(`${API_BASE_URL}/quiz/session/current/${attempt_id}`);
         return response.data;
@@ -49,6 +47,11 @@ export const quizAPI = {
     },
 
     getQuizByInstructorID: async (instructor_id: string) => {
+        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${instructor_id}`);
+        return response.data;
+    },
+
+    deleteQuizByID: async (instructor_id: string) => {
         const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${instructor_id}`);
         return response.data;
     }
