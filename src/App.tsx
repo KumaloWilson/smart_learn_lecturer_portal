@@ -27,6 +27,7 @@ import LoginPage from "./views/auth/login_page";
 import ProfileHeader from "./components/profile/profile_header";
 import LecturerDashboard from "./views/dashboard/dashboard";
 import CourseManagement from "./views/my_courses/my_courses";
+import QuizList from "./views/quiz/quiz_list.tsx";
 
 const queryClient = new QueryClient();
 const { Content, Footer, Sider } = Layout;
@@ -154,7 +155,7 @@ const App: React.FC = () => {
       mycourses: <CourseManagement />,
       materials: <div>CourseManagement</div>,
       schedule: <div>ClassSchedule </div>,
-      quizzes: <div>QuizManagement </div>,
+      quizzes: <QuizList/>,
       assignments: <div>AssignmentManagement</div>,
       grading: <div>GradingDashboard </div>,
       exambank: <div>QuestionBank </div>,

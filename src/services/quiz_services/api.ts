@@ -9,6 +9,11 @@ export const quizAPI = {
         return response.data;
     },
 
+    createQuiz: async (requestBody: AnyObject) => {
+        const response = await axios.post(`${API_BASE_URL}/quiz/session/create`, requestBody);
+        return response.data;
+    },
+
 
     // Submit the complete set of responses for the quiz attempt
     submitQuiz: async (attempt_id: string, responses: unknown[]) => {
@@ -35,6 +40,16 @@ export const quizAPI = {
 
     getQuizSession: async (attempt_id: string) => {
         const response = await axios.get(`${API_BASE_URL}/quiz/session/current/${attempt_id}`);
+        return response.data;
+    },
+
+    getQuizByCourseID: async (course_id: string) => {
+        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${course_id}`);
+        return response.data;
+    },
+
+    getQuizByInstructorID: async (instructor_id: string) => {
+        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${instructor_id}`);
         return response.data;
     }
 };
