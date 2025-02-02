@@ -75,7 +75,7 @@ export const useQuizManagement = (lecturerId: string) => {
             const response = await quizAPI.createQuiz(requestBody);
             if (response.success) {
                 message.success('Quiz created successfully');
-                await loadQuizzes(); // Reload quizzes after creation
+                await loadQuizzes();
             }
             return response;
         } catch (error) {

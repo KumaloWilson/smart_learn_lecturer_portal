@@ -13,7 +13,7 @@ export class CourseManagementService {
     }
 
     static async getCourseTopics(courseId: string): Promise<CourseTopic[]> {
-        const response = await axios.get(`${API_BASE_URL}/lecturer/course/topics/${courseId}`);
+        const response = await axios.get(`${API_BASE_URL}/lecturer/course/topics/course/${courseId}`);
         return response.data.data;
     }
 
