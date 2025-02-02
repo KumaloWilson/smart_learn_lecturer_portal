@@ -22,7 +22,6 @@ export const QuizForm: React.FC<QuizFormProps> = ({
                                                       onSubmit,
                                                       lecturerCourses,
                                                       courseTopics,
-                                                      selectedCourse,
                                                       onCourseChange,
                                                       initialValues
                                                   }) => {
@@ -60,6 +59,16 @@ export const QuizForm: React.FC<QuizFormProps> = ({
         setInputVisible(false);
         setInputValue('');
     };
+
+    const handleCourseChange = (courseId: string) => {
+        const selected = lecturerCourses.find(course => course.course_id === courseId);
+        if (selected) {
+            form.setFieldsValue({ topic : selected.course_name });
+        }
+        onCourseChange(courseId);
+    };
+
+
 
     const handleSubmit = async () => {
         try {
@@ -114,7 +123,7 @@ export const QuizForm: React.FC<QuizFormProps> = ({
                         >
                             <Select
                                 placeholder="Select course"
-                                onChange={onCourseChange}
+                                onChange={handleCourseChange}
                                 showSearch
                                 optionFilterProp="children"
                             >
@@ -126,24 +135,18 @@ export const QuizForm: React.FC<QuizFormProps> = ({
                             </Select>
                         </Form.Item>
 
-                        <Form.Item
-                            name="topic"
-                            label="Topic"
-                            rules={[{ required: true, message: 'Please select a topic' }]}
-                        >
-                            <Input disabled value={lecturerCourses.find(c => c.course_id === selectedCourse)?.course_name} />
+                        {/* Hidden field to store course name */}
+                        <Form.Item name="topic" hidden>
+                            <Input />
                         </Form.Item>
+
 
                         <Form.Item
                             name="subtopic"
-                            label="Subtopic"
-                            rules={[{ required: true, message: 'Please select a subtopic' }]}
+                            label="Topic"
+                            rules={[{required: true}]}
                         >
-                            <Select
-                                placeholder="Select subtopic"
-                                showSearch
-                                optionFilterProp="children"
-                            >
+                            <Select placeholder="Select topic">
                                 {courseTopics.map(topic => (
                                     <Select.Option key={topic.topic_id} value={topic.topic_name}>
                                         {topic.topic_name}
