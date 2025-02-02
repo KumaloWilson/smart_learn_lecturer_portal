@@ -42,12 +42,12 @@ export const quizAPI = {
     },
 
     getQuizByCourseID: async (course_id: string) => {
-        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${course_id}`);
+        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/course/${course_id}`);
         return response.data;
     },
 
     getQuizByInstructorID: async (instructor_id: string) => {
-        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/${instructor_id}`);
+        const response = await axios.get(`${API_BASE_URL}/quiz/session/available/instructor/${instructor_id}`);
         return response.data;
     },
 
