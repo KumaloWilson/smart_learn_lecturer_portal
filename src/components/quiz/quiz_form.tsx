@@ -3,6 +3,7 @@ import { Form, Select, Drawer, Input, InputNumber, Space, Button, Tag, Divider }
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { CourseTopic } from "../../models/course_topic";
 import { LecturerCourseAssignmentDetails } from "../../models/lecturer_courses";
+import { v4 as uuidv4 } from "uuid";
 import { Quiz } from "../../models/quiz";
 
 interface QuizFormProps {
@@ -17,14 +18,14 @@ interface QuizFormProps {
 }
 
 export const QuizForm: React.FC<QuizFormProps> = ({
-                                                      visible,
-                                                      onCancel,
-                                                      onSubmit,
-                                                      lecturerCourses,
-                                                      courseTopics,
-                                                      onCourseChange,
-                                                      initialValues
-                                                  }) => {
+    visible,
+    onCancel,
+    onSubmit,
+    lecturerCourses,
+    courseTopics,
+    onCourseChange,
+    initialValues
+}) => {
     const [form] = Form.useForm();
     const [tags, setTags] = useState<string[]>([]);
     const [inputVisible, setInputVisible] = useState(false);
@@ -63,7 +64,7 @@ export const QuizForm: React.FC<QuizFormProps> = ({
     const handleCourseChange = (courseId: string) => {
         const selected = lecturerCourses.find(course => course.course_id === courseId);
         if (selected) {
-            form.setFieldsValue({ topic : selected.course_name });
+            form.setFieldsValue({ topic: selected.course_name });
         }
         onCourseChange(courseId);
     };
@@ -75,9 +76,17 @@ export const QuizForm: React.FC<QuizFormProps> = ({
             setSubmitting(true);
             const values = await form.validateFields();
             const formData = {
-                ...values,
+                quiz_id: uuidv4(),
+                course_id: values.course_id,
+                topic: values.topic,
+                subtopic: values.subtopic,
+                difficulty: values.difficulty,
+                total_questions: values.total_questions,
+                time_limit: values.time_limit,
+                passing_score: values.passing_score,
+                learning_objectives: values.learning_objectives || [],
                 tags: tags,
-                status: 'active'
+                status: 'active' as 'draft' | 'active' | 'archived'
             };
             await onSubmit(formData);
             onCancel();
@@ -144,7 +153,7 @@ export const QuizForm: React.FC<QuizFormProps> = ({
                         <Form.Item
                             name="subtopic"
                             label="Topic"
-                            rules={[{required: true}]}
+                            rules={[{ required: true }]}
                         >
                             <Select placeholder="Select topic">
                                 {courseTopics.map(topic => (

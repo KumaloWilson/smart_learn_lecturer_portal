@@ -19,6 +19,13 @@ export const QuizDrawer: React.FC<QuizDrawerProps> = ({
                                                       }) => {
     if (!quiz) return null;
 
+
+    const learning_objectives = Array.isArray(quiz.learning_objectives) ? quiz.learning_objectives : [];
+
+
+    const tags = Array.isArray(quiz.tags) ? quiz.tags : [];
+
+
     return (
         <Drawer
             title="Quiz Details"
@@ -55,14 +62,14 @@ export const QuizDrawer: React.FC<QuizDrawerProps> = ({
                 </Descriptions.Item>
                 <Descriptions.Item label="Learning Objectives">
                     <ul>
-                        {quiz.learning_objectives?.map((objective, index) => (
+                        {learning_objectives.map((objective, index) => (
                             <li key={index}>{objective}</li>
                         ))}
                     </ul>
                 </Descriptions.Item>
                 <Descriptions.Item label="Tags">
                     <Space wrap>
-                        {quiz.tags?.map((tag, index) => (
+                        {tags.map((tag, index) => (
                             <Tag key={index}>{tag}</Tag>
                         ))}
                     </Space>
