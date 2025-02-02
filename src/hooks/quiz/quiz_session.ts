@@ -1,9 +1,10 @@
+// hooks/quiz/quiz_session.ts
 import { useState, useEffect } from 'react';
 import { message } from 'antd';
+import { Quiz } from '../../models/quiz';
+import { quizAPI } from '../../services/quiz_services/api';
 import {LecturerCourseAssignmentDetails} from "../../models/lecturer_courses.ts";
-import {Quiz} from "../../models/quiz.ts";
 import {CourseTopic} from "../../models/course_topic.ts";
-import { quizAPI } from '../../services/quiz_services/api.ts';
 import {CourseManagementService} from "../../services/course_service/api.ts";
 
 export const useQuizManagement = (lecturerId: string) => {
@@ -16,11 +17,15 @@ export const useQuizManagement = (lecturerId: string) => {
     const loadQuizzes = async () => {
         try {
             setLoading(true);
-            const data = await quizAPI.getQuizByInstructorID(lecturerId);
-            setQuizzes(data);
+            const response = await quizAPI.getQuizByInstructorID(lecturerId);
+            // Ensure we're getting an array from the response
+            const quizData = Array.isArray(response.data) ? response.data : [];
+            setQuizzes(quizData);
         } catch (error) {
             message.error('Failed to load quizzes');
             console.error(error);
+            // Initialize with empty array on error
+            setQuizzes([]);
         } finally {
             setLoading(false);
         }
@@ -28,30 +33,49 @@ export const useQuizManagement = (lecturerId: string) => {
 
     const loadLecturerCourses = async () => {
         try {
-            const courses = await CourseManagementService.getLecturerCourses(lecturerId);
+            const response = await CourseManagementService.getLecturerCourses(lecturerId);
+            const courses = Array.isArray(response) ? response : [];
             setLecturerCourses(courses);
         } catch (error) {
             message.error('Failed to load lecturer courses');
             console.error(error);
+            setLecturerCourses([]);
         }
     };
 
     const loadCourseTopics = async (courseId: string) => {
         try {
-            const topics = await  CourseManagementService.getCourseTopics(courseId);
+            const response = await CourseManagementService.getCourseTopics(courseId);
+            const topics = Array.isArray(response) ? response : [];
             setCourseTopics(topics);
         } catch (error) {
             message.error('Failed to load course topics');
             console.error(error);
+            setCourseTopics([]);
         }
     };
 
     const createQuiz = async (values: Partial<Quiz>) => {
         try {
-            const response = await quizAPI.createQuiz(values);
+            const requestBody = {
+                ...values,
+                created_by: lecturerId,
+                status: 'active',
+                learning_objectives: values.learning_objectives || [
+                    `Understand ${values.topic} concepts`,
+                    `Master ${values.topic} fundamentals`
+                ],
+                tags: [
+                    values.topic?.toLowerCase(),
+                    values.difficulty,
+                    values.subtopic?.toLowerCase()
+                ].filter(Boolean)
+            };
+
+            const response = await quizAPI.createQuiz(requestBody);
             if (response.success) {
                 message.success('Quiz created successfully');
-                loadQuizzes();
+                await loadQuizzes(); // Reload quizzes after creation
             }
             return response;
         } catch (error) {
@@ -62,7 +86,7 @@ export const useQuizManagement = (lecturerId: string) => {
 
     const deleteQuiz = async (quizId: string) => {
         try {
-           await quizAPI.deleteQuizByID(quizId);
+            await quizAPI.deleteQuizByID(quizId);
             message.success('Quiz deleted successfully');
             loadQuizzes();
         } catch (error) {
@@ -72,8 +96,10 @@ export const useQuizManagement = (lecturerId: string) => {
     };
 
     useEffect(() => {
-        loadQuizzes();
-        loadLecturerCourses();
+        if (lecturerId) {
+            loadQuizzes();
+            loadLecturerCourses();
+        }
     }, [lecturerId]);
 
     useEffect(() => {

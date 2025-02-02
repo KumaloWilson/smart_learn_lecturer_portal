@@ -14,6 +14,9 @@ interface QuizCardProps {
 }
 
 export const QuizCard: React.FC<QuizCardProps> = ({ quiz, onClick }) => {
+
+    const tags = Array.isArray(quiz.tags) ? quiz.tags : [];
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'active':
@@ -56,9 +59,20 @@ export const QuizCard: React.FC<QuizCardProps> = ({ quiz, onClick }) => {
                         </Tag>
                     </Tooltip>
 
-                    {quiz.tags?.map((tag, index) => (
-                        <Tag key={index} color="blue">{tag}</Tag>
-                    ))}
+                    {tags.length > 0 && (
+                        <div>
+                            <Space size={[0, 4]} wrap>
+                                {tags.map((tag, index) => (
+                                    <Tag key={index}>{tag}</Tag>
+                                ))}
+                            </Space>
+                        </div>
+                    )}
+
+                    <Tag color={quiz.status === 'active' ? 'green' : 'default'}>
+                        {quiz.status.toUpperCase()}
+                    </Tag>
+
                 </Space>
 
                 <Space className="mt-2" split={<span className="mx-2">|</span>}>
