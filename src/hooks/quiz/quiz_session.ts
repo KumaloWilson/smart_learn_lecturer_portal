@@ -61,6 +61,7 @@ export const useQuizManagement = (lecturerId: string) => {
                 ...values,
                 created_by: lecturerId,
                 status: 'active',
+                creator_role: 'lecturer',
                 learning_objectives: values.learning_objectives || [
                     `Understand ${values.topic} concepts`,
                     `Master ${values.topic} fundamentals`
