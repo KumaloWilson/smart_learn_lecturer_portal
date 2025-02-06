@@ -1,9 +1,8 @@
-import React, { useState, } from 'react';
-import { Tabs, Button, Modal, Form, Input, DatePicker, Select, message } from 'antd';
+import React, { useState } from 'react';
+import { Tabs, Button, Drawer, Form, Input, DatePicker, Select, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useVirtualClassesManagement } from '../../hooks/virtual_classes/hook';
 import { ClassScheduler } from '../../components/virtual_classes/virtual_class';
-import { API_BASE_URL } from '../../configs/config';
 import { virtualClassesAPI } from '../../services/virtual_classes/api';
 
 const { TabPane } = Tabs;
@@ -11,19 +10,28 @@ const { RangePicker } = DatePicker;
 
 export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId }) => {
     const {
+        courseTopics,
         lecturerCourses,
+        selectedCourse,
+        setSelectedCourse,
     } = useVirtualClassesManagement(lecturerId);
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [form] = Form.useForm();
     const [activeTab, setActiveTab] = useState<string>('all');
+
+    // Handle course selection change
+    const handleCourseChange = (courseId: string) => {
+        setSelectedCourse(courseId); // Update the selected course ID
+        form.setFieldsValue({ topic_id: undefined }); // Reset the topic dropdown
+    };
 
     const handleCreateClass = async (values: any) => {
         try {
             const [startTime, endTime] = values.timeRange;
             const classData = {
-                course_id: values.courseId,
-                topic_id: values.topicId,
+                course_id: values.course_id,
+                topic_id: values.topic_id,
                 title: values.title,
                 description: values.description,
                 start_time: startTime.toISOString(),
@@ -36,7 +44,7 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
             await virtualClassesAPI.createClass(classData);
 
             message.success('Virtual class scheduled successfully');
-            setIsModalVisible(false);
+            setIsDrawerVisible(false);
             form.resetFields();
         } catch (error) {
             message.error('Failed to schedule virtual class');
@@ -50,7 +58,7 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
-                    onClick={() => setIsModalVisible(true)}
+                    onClick={() => setIsDrawerVisible(true)}
                 >
                     Schedule New Class
                 </Button>
@@ -67,22 +75,43 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                 ))}
             </Tabs>
 
-            <Modal
+            <Drawer
                 title="Schedule Virtual Class"
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
+                visible={isDrawerVisible}
+                onClose={() => setIsDrawerVisible(false)}
+                width={500}
                 footer={null}
             >
                 <Form form={form} onFinish={handleCreateClass} layout="vertical">
                     <Form.Item
-                        name="courseId"
+                        name="course_id"
                         label="Course"
                         rules={[{ required: true }]}
                     >
-                        <Select>
+                        <Select
+                            onChange={handleCourseChange} // Trigger course change
+                            placeholder="Select a course"
+                        >
                             {lecturerCourses.map(course => (
                                 <Select.Option key={course.course_id} value={course.course_id}>
                                     {course.course_name}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="topic_id"
+                        label="Topic"
+                        rules={[{ required: true }]}
+                    >
+                        <Select
+                            placeholder="Select a topic"
+                            disabled={!selectedCourse} // Disable if no course is selected
+                        >
+                            {courseTopics.map(topic => (
+                                <Select.Option key={topic.topic_id} value={topic.topic_id}>
+                                    {topic.topic_name}
                                 </Select.Option>
                             ))}
                         </Select>
@@ -110,8 +139,7 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                         </Button>
                     </Form.Item>
                 </Form>
-            </Modal>
+            </Drawer>
         </div>
     );
 };
-
