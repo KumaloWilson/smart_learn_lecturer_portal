@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, List, Button, Tag } from 'antd';
 import { VideoCameraOutlined } from '@ant-design/icons';
 import { VirtualClass } from '../../models/virtual_class';
+import { virtualClassesAPI } from '../../services/virtual_classes/api';
 
 interface ClassSchedulerProps {
     courseId: string | null;
@@ -17,12 +18,9 @@ export const ClassScheduler: React.FC<ClassSchedulerProps> = ({ courseId }) => {
 
     const loadClasses = async () => {
         try {
-            const endpoint = courseId
-                ? `/api/virtual/classes/course/${courseId}`
-                : '/api/virtual/classes/upcoming/${lecturerId}';
-            const response = await fetch(endpoint);
-            const data = await response.json();
-            setClasses(data);
+            const response = await virtualClassesAPI.getVirtualClassesByCourseId(courseId!);
+            const classes = await response.data;
+            setClasses(classes);
         } catch (error) {
             console.error('Failed to load classes:', error);
         }

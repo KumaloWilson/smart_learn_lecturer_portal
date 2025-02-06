@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-buddy/ide-toolbox": "^2.4.0",
+    "@react-buddy/palette-antd": "^5.3.0",
     "antd": "^5.22.6",
     "axios": "^1.7.9",
     "lucide-react": "^0.469.0",
@@ -19,12 +21,11 @@
     "react-router-dom": "^7.1.1",
     "recharts": "^2.15.0",
     "uuid": "^11.0.5",
-    "webpack": "^5.97.1",
-    "@react-buddy/ide-toolbox": "^2.4.0",
-    "@react-buddy/palette-antd": "^5.3.0"
+    "webpack": "^5.97.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@types/jitsi-meet": "^2.0.5",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

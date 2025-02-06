@@ -28,6 +28,7 @@ import ProfileHeader from "./components/profile/profile_header";
 import LecturerDashboard from "./views/dashboard/dashboard";
 import CourseManagement from "./views/my_courses/my_courses";
 import QuizList from "./views/quiz/quiz_list.tsx";
+import { VirtualClasses } from "./views/virtual_classes/virtual_class.tsx";
 
 const queryClient = new QueryClient();
 const { Content, Footer, Sider } = Layout;
@@ -155,7 +156,7 @@ const App: React.FC = () => {
       mycourses: <CourseManagement />,
       materials: <div>CourseManagement</div>,
       schedule: <div>ClassSchedule </div>,
-      quizzes: <QuizList lecturerId={lecturer!.lecturer_id!}/>,
+      quizzes: <QuizList lecturerId={lecturer!.lecturer_id!} />,
       assignments: <div>AssignmentManagement</div>,
       grading: <div>GradingDashboard </div>,
       exambank: <div>QuestionBank </div>,
@@ -166,7 +167,7 @@ const App: React.FC = () => {
       announcements: <div>Announcements</div>,
       messages: <div>Messages</div>,
       forums: <div>Discussion Forums</div>,
-      meetings: <div>VirtualMeetings</div>,
+      meetings: <VirtualClasses lecturerId={lecturer!.lecturer_id!} />,
       recordings: <div>ClassRecordings</div>,
       performance: <div>PerformanceReports</div>,
       statistics: <div>CourseStatistics</div>,

@@ -3,6 +3,8 @@ import { Tabs, Button, Modal, Form, Input, DatePicker, Select, message } from 'a
 import { PlusOutlined } from '@ant-design/icons';
 import { useVirtualClassesManagement } from '../../hooks/virtual_classes/hook';
 import { ClassScheduler } from '../../components/virtual_classes/virtual_class';
+import { API_BASE_URL } from '../../configs/config';
+import { virtualClassesAPI } from '../../services/virtual_classes/api';
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
@@ -31,12 +33,7 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                 recurrence_pattern: values.recurrencePattern
             };
 
-            // Call API to create class
-            await fetch('/api/virtual/classes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(classData)
-            });
+            await virtualClassesAPI.createClass(classData);
 
             message.success('Virtual class scheduled successfully');
             setIsModalVisible(false);
