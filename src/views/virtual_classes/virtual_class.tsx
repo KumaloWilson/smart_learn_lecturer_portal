@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { Tabs, Button, Drawer, Form, Input, DatePicker, Select, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import moment from 'moment';
 import { useVirtualClassesManagement } from '../../hooks/virtual_classes/hook';
 import { ClassScheduler } from '../../components/virtual_classes/virtual_class';
 import { virtualClassesAPI } from '../../services/virtual_classes/api';
+import type { Moment } from 'moment';
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-interface VirtualClassFormData {
+interface ClassFormValues {
     course_id: string;
-    topic_id: string;
+    topic_id?: string;
     title: string;
-    description: string;
-    timeRange: [moment.Moment, moment.Moment];
-    is_recurring: boolean;
-    recurrence_pattern?: string;
+    description?: string;
+    timeRange: [Moment, Moment];
+    isRecurring?: boolean;
+    recurrencePattern?: string;
 }
 
 export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId }) => {
@@ -28,30 +28,30 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
     } = useVirtualClassesManagement(lecturerId);
 
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const [form] = Form.useForm<VirtualClassFormData>();
+    const [form] = Form.useForm<ClassFormValues>();
     const [activeTab, setActiveTab] = useState<string>('all');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleCourseChange = (courseId: string) => {
         setSelectedCourse(courseId);
         form.setFieldsValue({ topic_id: undefined });
     };
 
-    const handleCreateClass = async (values: VirtualClassFormData) => {
+    const handleCreateClass = async (values: ClassFormValues) => {
         try {
+            setIsSubmitting(true);
             const [startTime, endTime] = values.timeRange;
 
-            // Ensure all required fields are present
             const classData = {
                 course_id: values.course_id,
                 topic_id: values.topic_id,
                 title: values.title,
-                description: values.description || '', // Provide empty string if description is undefined
-                start_time: startTime.toISOString(),
-                end_time: endTime.toISOString(),
+                description: values.description?.trim() || '',
+                start_time: startTime.toDate(),
+                end_time: endTime.toDate(),
                 created_by: lecturerId,
-                is_recurring: values.is_recurring || false,
-                recurrence_pattern: values.recurrence_pattern || null,
-                status: 'scheduled' // Add default status
+                is_recurring: values.isRecurring || false,
+                recurrence_pattern: values.recurrencePattern
             };
 
             await virtualClassesAPI.createClass(classData);
@@ -59,8 +59,10 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
             setIsDrawerVisible(false);
             form.resetFields();
         } catch (error) {
-            console.error('Error creating virtual class:', error);
             message.error('Failed to schedule virtual class');
+            console.error('Error creating virtual class:', error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -99,7 +101,7 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                     form={form}
                     onFinish={handleCreateClass}
                     layout="vertical"
-                    initialValues={{ is_recurring: false }}
+                    disabled={isSubmitting}
                 >
                     <Form.Item
                         name="course_id"
@@ -152,18 +154,19 @@ export const VirtualClasses: React.FC<{ lecturerId: string }> = ({ lecturerId })
                         label="Class Time"
                         rules={[{ required: true, message: 'Please select class time' }]}
                     >
-                        <RangePicker showTime />
-                    </Form.Item>
-
-                    <Form.Item name="is_recurring" valuePropName="checked">
-                        <Select defaultValue={false}>
-                            <Select.Option value={false}>One-time Class</Select.Option>
-                            <Select.Option value={true}>Recurring Class</Select.Option>
-                        </Select>
+                        <RangePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm"
+                        />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            block
+                            loading={isSubmitting}
+                        >
                             Schedule Class
                         </Button>
                     </Form.Item>
