@@ -42,7 +42,7 @@ export const JitsiMeeting: React.FC<JitsiMeetingProps> = ({
                     disableRemoteMute: false,
                     remoteVideoMenu: {
                         disableKick: false,
-                        disableGrantModerator: true,
+                        disableGrantModerator: false,
                         disablePrivateChat: false
                     }
                 }}
