@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Drawer, Form, message } from 'antd';
 import { useVirtualClassesManagement } from '../../hooks/virtual_classes/hook';
-import { ClassScheduler } from '../../components/virtual_classes/virtual_class';
+import { ClassScheduler } from '../../components/virtual_classes/class_scheduler';
 import { virtualClassesAPI } from '../../services/virtual_classes/api';
 import { ClassFormValues, VirtualClassForm } from '../../components/virtual_classes/virtual_class_form';
 import { VirtualClassHeader } from '../../components/virtual_classes/class_tabs';

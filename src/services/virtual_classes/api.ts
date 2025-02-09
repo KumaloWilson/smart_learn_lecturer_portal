@@ -15,8 +15,18 @@ export const virtualClassesAPI = {
         return response.data;
     },
 
+    getVirtualClassesByClassId: async (class_id: string) => {
+        const response = await axios.get(`${API_BASE_URL}/virtual/classes/class/${class_id}`);
+        return response.data;
+    },
+
     getVirtualClassesByLecturerId: async (lecturer_id: string) => {
         const response = await axios.get(`${API_BASE_URL}/virtual/classes/upcoming/${lecturer_id}`);
+        return response.data;
+    },
+
+    updateClassStatus: async (class_id: string, status: string) => {
+        const response = await axios.put(`${API_BASE_URL}/virtual/classes/status/${class_id}`, { status });
         return response.data;
     },
 };

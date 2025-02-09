@@ -29,6 +29,7 @@ import LecturerDashboard from "./views/dashboard/dashboard";
 import CourseManagement from "./views/my_courses/my_courses";
 import QuizList from "./views/quiz/quiz_list.tsx";
 import { VirtualClasses } from "./views/virtual_classes/virtual_class.tsx";
+import { LiveClass } from "./components/virtual_classes/live_class.tsx";
 
 const queryClient = new QueryClient();
 const { Content, Footer, Sider } = Layout;
@@ -266,7 +267,7 @@ const App: React.FC = () => {
                           <Route path="/assessments/*" element={<MainContent />} />
                           <Route path="/students/*" element={<MainContent />} />
                           <Route path="/communication/*" element={<MainContent />} />
-                          <Route path="/virtual/*" element={<MainContent />} />
+                          <Route path="/virtual/live/:classId" element={<LiveClass />} />
                           <Route path="/reports/*" element={<MainContent />} />
                           <Route path="/:tab" element={<MainContent />} />
                           <Route path="/" element={<Navigate to="/dashboard" replace />} />
